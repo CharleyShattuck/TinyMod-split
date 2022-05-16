@@ -17,13 +17,13 @@ unsigned long elapsed=0; // for counter timer
 uint64_t D=0; // for double result of multiplication
 
 // data stack
-#define STKSIZE 16
+#define STKSIZE 32 
 uint32_t stack[STKSIZE];
 #define DROP T=stack[--S]
 #define DUP stack[S++]=T
 
 // return stack
-#define RSTKSIZE 16
+#define RSTKSIZE 32
 uint32_t rstack[RSTKSIZE];
 #define PUSH rstack[R++]=T
 #define POP T=rstack[--R]
@@ -444,6 +444,12 @@ void _initPin(){
     pinMode(a, b);
 }
 
+void _storePin(){
+    int a = T; DROP;
+    int b = T; DROP;
+    digitalWrite(a, b);
+}
+
 // turn this into _storePin
 void _fetchGPIO(){
     DUP;
@@ -522,7 +528,7 @@ void (*function[])()={
     _wfetchplus , _umstar , _umslashmod , // 55
     _wfetch , _wstore , _dnegate , // 58
     _squote , _nip , _initMCP23017 , _fetchMCP23017 , // 62
-    _fetchGPIO , _initPin , _lshift , _rshift , // 66
+    _storePin , _initPin , _lshift , _rshift , // 66
     _Keyboard_begin , _Keyboard_press , // 68
     _Keyboard_release , _Keyboard_releaseAll , _Keyboard_end , // 71
     _dropzbranch , _Keyboard_write , _fetchPin , // 74

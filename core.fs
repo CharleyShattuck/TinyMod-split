@@ -96,7 +96,7 @@ code dnegate  58 ,
 code nip  60 ,
 code initMCP23017  61 ,
 code @MCP23017  62 ,
-code initGPIO  63 ,  \ to become !pin
+code !pin  63 ,
 code pinMode  64 ,
 code lshift  65 ,
 code rshift  66 ,
@@ -116,6 +116,7 @@ code @pin 74 ,
 :m -until ( a)  +branch [ 2/ ] , m;
 :m until/ ( a)  /branch [ 2/ ] , m;
 :m then ( a)  here [ 2/ swap ] !-t ;
+:m else ( a - a')  branch begin 0 , [ swap ] then m; 
 :m if (  - a)  0branch begin 0 , m;
 :m -if (  - a)  +branch begin 0 , m;
 :m if/ (  - a)  /branch begin 0 , m;
@@ -131,13 +132,14 @@ code @pin 74 ,
 :m cvariable  code 14 , ramHERE , 1 ramALLOT m;
 :m wvariable  code 14 , ramHERE , 2 ramALLOT m;
 :m variable  code 14 , ramHERE , 4 ramALLOT m;
-:m constant  code 14 , , m;
+:m wconstant  code 14 , , m;
 :m create  -code 14 , HERE [ 2/ 1+ ] , header m;
 :m -create  HERE [ 2/ ] constant m;
 
 \ think of #, as a literal instruction in an assembler
 :m #,  lit [ dup $ffff and ] , [ $10000 / $ffff and ] , m;
 :m [']  [ ' >body @ ] #, m;
+:m ',  [ ' >body @ ] , m;
 :m ,"  here 0 , [ [char] " word count 0 do
         count ,-t loop drop ]
     here [ over - 2/ 1 - swap !-t ] m;
@@ -181,6 +183,7 @@ cvariable base
 : dabs ( d - +d)  -if dnegate then ;
 : d. ( d)  dup >r dabs <# #s r> sign #> type space ;
 : 0< ( n - flag)  -if drop -1 #, exit then drop 0 #, ;
+: < ( n1 n2 - flag)  - 0< ;
 : . ( n)  dup 0< d. ;
 
 : false  0 #, ;
